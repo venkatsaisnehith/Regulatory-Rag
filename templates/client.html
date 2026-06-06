@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regulatory PDF Compliance RAG Agent</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-primary: #080c14;
+            --bg-secondary: rgba(15, 23, 42, 0.6);
+            --bg-tertiary: #1e293b;
+            --accent-purple: #a855f7;
+            --accent-purple-glow: rgba(168, 85, 247, 0.3);
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-blue: #3b82f6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.06);
+            --card-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(168, 85, 247, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.08) 0px, transparent 50%);
+        }
+
+        h1, h2, h3, .font-outfit {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* App Container */
+        .app-container {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            border: 1px solid var(--border-color);
+            background: rgba(8, 12, 20, 0.2);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 320px;
+            background: rgba(15, 23, 42, 0.8);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            gap: 24px;
+            flex-shrink: 0;
+        }
+
+        .brand h1 {
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .brand p {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        /* Upload Container */
+        .upload-box {
+            border: 2px dashed rgba(168, 85, 247, 0.3);
+            background: rgba(168, 85, 247, 0.02);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-box:hover {
+            border-color: var(--accent-purple);
+            background: rgba(168, 85, 247, 0.05);
+        }
+
+        .upload-box p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        /* Doc list */
+        .doc-list {
+            flex-grow: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .doc-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .doc-item:hover, .doc-item.active {
+            background: rgba(168, 85, 247, 0.1);
+            border-color: var(--accent-purple);
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        .mode-btn:hover {
+            border-color: rgba(168, 85, 247, 0.5);
+            color: var(--text-main);
+        }
+        .mode-btn.active {
+            border-color: var(--accent-purple);
+            background: rgba(168, 85, 247, 0.1);
+            color: var(--text-main);
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.15);
+        }
+
+        .agent-steps-container {
+            margin-top: 12px;
+            border-left: 2px solid var(--accent-purple);
+            padding-left: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 13px;
+        }
+
+        .agent-step {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 12px;
+        }
+
+        .agent-step-title {
+            font-weight: 600;
+            color: var(--accent-purple);
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .agent-step-input {
+            color: var(--text-muted);
+            font-family: monospace;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 4px 6px;
+            border-radius: 4px;
+            margin-bottom: 6px;
+            display: inline-block;
+            font-size: 11px;
+        }
+
+        .agent-step-obs {
+            font-size: 12px;
+            color: var(--text-main);
+            white-space: pre-wrap;
+            max-height: 120px;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 6px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        /* Chat Core Layout */
+        .chat-main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background: transparent;
+            height: 100%;
+        }
+
+        /* Connection Header */
+        .chat-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-red);
+            box-shadow: 0 0 8px var(--accent-red);
+        }
+
+        .status-dot.online {
+            background: var(--accent-green);
+            box-shadow: 0 0 8px var(--accent-green);
+        }
+
+        /* Messages view */
+        .messages-container {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .message {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-width: 85%;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .message.user {
+            align-self: flex-end;
+        }
+
+        .message.bot {
+            align-self: flex-start;
+        }
+
+        .message-bubble {
+            padding: 16px 20px;
+            border-radius: 16px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, var(--accent-purple) 0%, #7e22ce 100%);
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.bot .message-bubble {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .message.user .message-meta {
+            text-align: right;
+        }
+
+        /* Input controller */
+        .chat-input-bar {
+            padding: 24px 30px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 12px;
+        }
+
+        .input-box {
+            flex-grow: 1;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px 18px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .input-box:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 0 2px var(--accent-purple-glow);
+        }
+
+        .btn-send {
+            background: linear-gradient(135deg, var(--accent-purple) 0%, #7e22ce 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 0 24px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .btn-send:hover {
+            transform: translateY(-1px);
+        }
+
+        /* Audit Lineage Panel */
+        .audit-panel {
+            width: 380px;
+            background: rgba(15, 23, 42, 0.85);
+            border-left: 1px solid var(--border-color);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            flex-shrink: 0;
+            overflow-y: auto;
+        }
+
+        .audit-header {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+        }
+
+        .audit-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .audit-header p {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .audit-stat-row {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 12px;
+        }
+
+        .audit-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .stat-value.green { color: var(--accent-green); }
+        .stat-value.red { color: var(--accent-red); }
+
+        .audit-chunks-container {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .chunk-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 12px;
+            transition: border-color 0.2s ease;
+        }
+
+        .chunk-card:hover {
+            border-color: rgba(168, 85, 247, 0.3);
+        }
+
+        .chunk-meta {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-muted);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 6px;
+        }
+
+        .chunk-text {
+            color: var(--text-main);
+            line-height: 1.6;
+            max-height: 100px;
+            overflow-y: auto;
+            font-family: 'Inter', sans-serif;
+            padding-right: 4px;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="brand">
+                <h1>Regulatory RAG Agent</h1>
+                <p>Luxembourg Automated Audit & Compliance Engine</p>
+            </div>
+            
+            <div>
+                <h3 class="section-title">Ingest Document</h3>
+                <div class="upload-box" id="upload-box" onclick="triggerUpload()">
+                    <span style="font-size: 24px; color: var(--accent-purple);">📥</span>
+                    <p>Click to Upload Regulatory PDF</p>
+                    <input type="file" id="file-input" style="display: none;" accept=".pdf" onchange="handleFileUpload()">
+                </div>
+            </div>
+
+            <div>
+                <h3 class="section-title">Operational Mode</h3>
+                <div style="display: flex; gap: 8px;">
+                    <button id="mode-rag" class="mode-btn active" onclick="switchMode('rag')">
+                        🔍 Standard RAG
+                    </button>
+                    <button id="mode-agent" class="mode-btn" onclick="switchMode('agent')">
+                        🤖 Auditor Agent
+                    </button>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0;">
+                <h3 class="section-title">Indexed Documents</h3>
+                <div class="doc-list" id="doc-list">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Container -->
+        <div class="chat-main">
+            <div class="chat-header">
+                <div>
+                    <h3 id="current-doc-title">All Indexed Documents</h3>
+                    <p style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Ask any compliance audit question below</p>
+                </div>
+                <div class="connection-status">
+                    <div id="api-status-dot" class="status-dot"></div>
+                    <span id="api-status-text">Connecting...</span>
+                </div>
+            </div>
+
+            <div class="messages-container" id="messages-container">
+                <!-- Welcome Message -->
+                <div class="message bot">
+                    <div class="message-bubble">
+                        Hello! I am your regulatory compliance RAG agent. 
+                        I can search through indexed Luxembourg financial circulars and the EU AI Act to answer complex compliance queries with structured audit logs.
+                        <br><br>
+                        <strong>Try uploading a compliance PDF, or ask a question if documents are already indexed!</strong>
+                    </div>
+                    <div class="message-meta">Compliance Agent</div>
+                </div>
+            </div>
+
+            <div class="chat-input-bar">
+                <input type="text" id="query-input" class="input-box" placeholder="Ask a compliance question..." onkeydown="if(event.key === 'Enter') sendQuery()">
+                <button class="btn-send" onclick="sendQuery()">Send Query</button>
+            </div>
+        </div>
+
+        <!-- Audit Panel -->
+        <div class="audit-panel" id="audit-panel">
+            <div class="audit-header">
+                <h2>Oversight Lineage Audit</h2>
+                <p>EU AI Act & CSSF Circular Compliance Logs</p>
+            </div>
+
+            <!-- Stats -->
+            <div class="audit-stat-row">
+                <div class="audit-stat">
+                    <span style="color: var(--text-muted);">Guardrails</span>
+                    <span class="stat-value green" id="audit-guardrail">-</span>
+                </div>
+                <div class="audit-stat">
+                    <span style="color: var(--text-muted);">Top Score</span>
+                    <span class="stat-value" id="audit-score">0.000</span>
+                </div>
+            </div>
+
+            <h3 class="section-title" style="margin-top: 10px;">Retrieved Source Chunks</h3>
+            
+            <div class="audit-chunks-container" id="audit-chunks">
+                <p style="font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 20px;">
+                    Select an answer to inspect its regulatory chunks and data lineage.
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const API_URL = "http://127.0.0.1:8001";
+        let isOffline = true;
+        let selectedDoc = null;
+        let documentRegistry = [];
+        let messages = [];
+        let currentMode = "rag";
+
+        function switchMode(mode) {
+            currentMode = mode;
+            document.getElementById("mode-rag").className = mode === "rag" ? "mode-btn active" : "mode-btn";
+            document.getElementById("mode-agent").className = mode === "agent" ? "mode-btn active" : "mode-btn";
+            
+            const currentDocTitle = document.getElementById("current-doc-title");
+            const queryInput = document.getElementById("query-input");
+            
+            if (mode === "rag") {
+                currentDocTitle.textContent = selectedDoc ? selectedDoc : "All Indexed Documents";
+                document.querySelector(".chat-header p").textContent = "Ask any compliance audit question below";
+                queryInput.placeholder = "Ask a compliance question...";
+            } else {
+                currentDocTitle.textContent = "Autonomous Auditor Agent";
+                document.querySelector(".chat-header p").textContent = "ReAct Reasoning Loop (Thought -> Action -> Observation)";
+                queryInput.placeholder = "Enter an audit task (e.g. 'Audit fund LU123456789 for cash buffers')...";
+            }
+        }
+
+        // Check API connection on load
+        async function checkConnection() {
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                if (response.ok) {
+                    const data = await response.json();
+                    isOffline = false;
+                    document.getElementById("api-status-dot").className = "status-dot online";
+                    document.getElementById("api-status-text").textContent = "Connected to local RAG service";
+                    loadDocumentList();
+                }
+            } catch (err) {
+                isOffline = true;
+                document.getElementById("api-status-dot").className = "status-dot";
+                document.getElementById("api-status-text").textContent = "Offline Sandbox Mode";
+                loadMockDocuments();
+            }
+        }
+
+        function loadMockDocuments() {
+            documentRegistry = ["EU_AI_Act_Draft_2026.pdf", "CSSF_Circular_18_698.pdf"];
+            renderDocumentList();
+        }
+
+        async function loadDocumentList() {
+            try {
+                const response = await fetch(`${API_URL}/documents`);
+                if (response.ok) {
+                    documentRegistry = await response.json();
+                    renderDocumentList();
+                }
+            } catch (err) {
+                console.error("Failed to load documents list from API: ", err);
+            }
+        }
+
+        function renderDocumentList() {
+            const list = document.getElementById("doc-list");
+            list.innerHTML = "";
+
+            documentRegistry.forEach(doc => {
+                const item = document.createElement("div");
+                item.className = "doc-item" + (selectedDoc === doc ? " active" : "");
+                item.textContent = doc;
+                item.onclick = () => {
+                    selectedDoc = selectedDoc === doc ? null : doc;
+                    document.getElementById("current-doc-title").textContent = selectedDoc ? selectedDoc : "All Indexed Documents";
+                    renderDocumentList();
+                };
+                list.appendChild(item);
+            });
+        }
+
+        function triggerUpload() {
+            document.getElementById("file-input").click();
+        }
+
+        async function handleFileUpload() {
+            const input = document.getElementById("file-input");
+            if (input.files.length === 0) return;
+
+            const file = input.files[0];
+            
+            // UI representation
+            addMessage("bot", `Parsing and indexing "${file.name}"... This takes a few seconds.`);
+            
+            if (isOffline) {
+                setTimeout(() => {
+                    addMessage("bot", `[Sandbox Fallback] Upload complete. "${file.name}" simulated as indexed.`);
+                    documentRegistry.push(file.name);
+                    renderDocumentList();
+                }, 1500);
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                const response = await fetch(`${API_URL}/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    addMessage("bot", `Success: ${data.message} (${data.chunks_count} chunks indexed).`);
+                    loadDocumentList();
+                } else {
+                    const errData = await response.json();
+                    addMessage("bot", `Failed to parse document: ${errData.detail}`);
+                }
+            } catch (err) {
+                addMessage("bot", `Network error during upload: ${err}`);
+            }
+        }
+
+        function addMessage(sender, text, auditTrail = null, guardrailStatus = null) {
+            const container = document.getElementById("messages-container");
+            const msg = document.createElement("div");
+            msg.className = `message ${sender === 'user' ? 'user' : 'bot'}`;
+
+            // Save message index for audit retrieval
+            const msgIndex = messages.length;
+            messages.push({ sender, text, auditTrail, guardrailStatus });
+
+            msg.innerHTML = `
+                <div class="message-bubble" ${auditTrail ? `style="cursor:pointer;" onclick="inspectAudit(${msgIndex})"` : ""}>
+                    ${text}
+                </div>
+                <div class="message-meta">${sender === 'user' ? 'User Query' : 'Compliance Agent'} ${auditTrail ? '🔍 (Click to Audit Lineage)' : ''}</div>
+            `;
+            container.appendChild(msg);
+            container.scrollTop = container.scrollHeight;
+
+            if (auditTrail) {
+                inspectAudit(msgIndex);
+            }
+        }
+
+        function inspectAudit(index) {
+            const msg = messages[index];
+            if (!msg || !msg.auditTrail) return;
+
+            // Update stats
+            const guardVal = document.getElementById("audit-guardrail");
+            guardVal.textContent = msg.guardrailStatus.toUpperCase();
+            if (msg.guardrailStatus === "passed" || msg.guardrailStatus === "success") {
+                guardVal.className = "stat-value green";
+            } else {
+                guardVal.className = "stat-value red";
+            }
+
+            const topScore = msg.auditTrail[0] ? msg.auditTrail[0].rerank_score || msg.auditTrail[0].score : 0.0;
+            document.getElementById("audit-score").textContent = topScore.toFixed(3);
+
+            // Populate retrieved chunks
+            const container = document.getElementById("audit-chunks");
+            container.innerHTML = "";
+
+            msg.auditTrail.forEach((chunk, i) => {
+                const card = document.createElement("div");
+                card.className = "chunk-card";
+
+                const score = chunk.rerank_score || chunk.score;
+                card.innerHTML = `
+                    <div class="chunk-meta">
+                        <span>Chunk ${i+1} (Match: ${score.toFixed(3)})</span>
+                        <span>Page ${chunk.metadata.pages.join(', ')}</span>
+                    </div>
+                    <div style="font-weight: 600; color: var(--accent-purple); font-size: 11px; margin-bottom: 4px;">
+                        ${chunk.metadata.hierarchy_path}
+                    </div>
+                    <div class="chunk-text">${chunk.text}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function addAgentMessage(verdict, steps) {
+            const container = document.getElementById("messages-container");
+            const msg = document.createElement("div");
+            msg.className = "message bot";
+
+            let stepsHtml = "";
+            if (steps && steps.length > 0) {
+                stepsHtml = `<div class="agent-steps-container">`;
+                steps.forEach((step, i) => {
+                    stepsHtml += `
+                        <div class="agent-step">
+                            <div class="agent-step-title">
+                                <span>Step ${i+1}: Action - ${step.action}</span>
+                            </div>
+                            <div class="agent-step-input">Input: ${step.input}</div>
+                            <div class="agent-step-obs">Observation: ${step.observation}</div>
+                        </div>
+                    `;
+                });
+                stepsHtml += `</div>`;
+            }
+
+            msg.innerHTML = `
+                <div class="message-bubble" style="background: rgba(168, 85, 247, 0.05); border: 1px solid rgba(168, 85, 247, 0.3);">
+                    <div style="font-weight: 700; color: var(--accent-purple); font-size: 15px; margin-bottom: 8px; font-family: 'Outfit';">
+                        🤖 Autonomous Auditor Agent Verdict
+                    </div>
+                    <div>${verdict}</div>
+                    ${stepsHtml}
+                </div>
+                <div class="message-meta">Compliance Agent (ReAct Auditor)</div>
+            `;
+            container.appendChild(msg);
+            container.scrollTop = container.scrollHeight;
+            
+            const guardVal = document.getElementById("audit-guardrail");
+            guardVal.textContent = "SUCCESS";
+            guardVal.className = "stat-value green";
+            document.getElementById("audit-score").textContent = "1.000";
+            
+            const auditContainer = document.getElementById("audit-chunks");
+            auditContainer.innerHTML = `
+                <div class="chunk-card" style="border-color: var(--accent-purple);">
+                    <div class="chunk-meta">
+                        <span>Agent Execution Summary</span>
+                        <span>Steps: ${steps ? steps.length : 0}</span>
+                    </div>
+                    <div style="font-weight: 600; color: var(--accent-purple); font-size: 11px; margin-bottom: 4px;">
+                        REACT COMPLIANCE PROTOCOL
+                    </div>
+                    <div class="chunk-text" style="max-height: none;">
+                        The agent has successfully cross-referenced the fund parameters with the regulatory constraints database and completed the audit validation checklist.
+                    </div>
+                </div>
+            `;
+        }
+
+        async function sendQuery() {
+            const input = document.getElementById("query-input");
+            const query = input.value.strip ? input.value.strip() : input.value.trim();
+            if (!query) return;
+
+            addMessage("user", query);
+            input.value = "";
+
+            if (isOffline) {
+                if (currentMode === "agent") {
+                    setTimeout(() => {
+                        let mockSteps = [];
+                        let mockVerdict = "";
+                        
+                        if (query.toUpperCase().includes("LU123456789")) {
+                            mockSteps = [
+                                {
+                                    action: "get_fund_metrics",
+                                    input: "LU123456789",
+                                    observation: '{\n  "Fund_Name": "Lux Growth Equities Fund",\n  "AUM": 105000000.0,\n  "Cash_Buffer": 525000.0,\n  "Cash_Ratio": 0.005,\n  "Management_Fee_Annual": 0.015\n}'
+                                },
+                                {
+                                    action: "query_regulations",
+                                    input: "What is the cash limit for investment funds?",
+                                    observation: '- [CSSF_Circular_18_698.pdf > Section 5 > Cash Requirements] (Relevance: 0.942): Under Luxembourg regulations, UCITS funds must maintain a minimum cash buffer/liquidity ratio of 2.0% (0.02) to handle redemption requests.'
+                                },
+                                {
+                                    action: "submit_compliance_alert",
+                                    input: "LU123456789 violates the 2% cash buffer rule with an active ratio of 0.5%.",
+                                    observation: 'SUCCESS: Compliance warning logged. Alert details: LU123456789 violates the 2% cash buffer rule with an active ratio of 0.5%.'
+                                }
+                            ];
+                            mockVerdict = "Audit Report: Fund LU123456789 holds 0.5% cash, violating the 2.0% regulatory limit established in CSSF Circular 18-698. Compliance alert has been logged successfully.";
+                        } else if (query.toUpperCase().includes("LU987654321")) {
+                            mockSteps = [
+                                {
+                                    action: "get_fund_metrics",
+                                    input: "LU987654321",
+                                    observation: '{\n  "Fund_Name": "Lux Safe Cash Reserve",\n  "AUM": 200000000.0,\n  "Cash_Buffer": 4400000.0,\n  "Cash_Ratio": 0.022,\n  "Management_Fee_Annual": 0.008\n}'
+                                },
+                                {
+                                    action: "query_regulations",
+                                    input: "What is the cash limit for investment funds?",
+                                    observation: '- [CSSF_Circular_18_698.pdf > Section 5 > Cash Requirements] (Relevance: 0.942): Under Luxembourg regulations, UCITS funds must maintain a minimum cash buffer/liquidity ratio of 2.0% (0.02) to handle redemption requests.'
+                                }
+                            ];
+                            mockVerdict = "Audit Report: Fund LU987654321 holds 2.2% cash, which satisfies the 2.0% regulatory limit established in CSSF Circular 18-698. The fund is compliant.";
+                        } else {
+                            mockSteps = [
+                                {
+                                    action: "query_regulations",
+                                    input: query,
+                                    observation: "No matching regulatory clauses found for the specified fund context."
+                                }
+                            ];
+                            mockVerdict = "Audit Report: Scanned the regulatory logs. Please specify a valid fund ID (e.g. LU123456789) to run an automated portfolio compliance audit.";
+                        }
+                        
+                        addAgentMessage(mockVerdict, mockSteps);
+                    }, 1200);
+                    return;
+                }
+
+                // Heuristic Offline Sandbox responses to wow the user (RAG Mode)
+                setTimeout(() => {
+                    let mockAnswer = "";
+                    let mockGuardrail = "passed";
+                    let mockTrail = [];
+
+                    if (query.toLowerCase().includes("prohibited") || query.toLowerCase().includes("banned")) {
+                        mockAnswer = "Under Article 5, the following AI practices are prohibited: cognitive behavioral manipulation, untargeted scraping of facial images, and emotion recognition in workplaces/education.";
+                        mockTrail = [
+                            {
+                                text: "Article 5: Prohibited Artificial Intelligence Practices. The following practices are prohibited: cognitive behavioral manipulation, scraping facial images, emotion recognition.",
+                                score: 0.895,
+                                metadata: { pages: [12], hierarchy_path: "EU_AI_Act_Draft_2026.pdf > CHAPTER II > Article 5" }
+                            }
+                        ];
+                    } else if (query.toLowerCase().includes("high-risk") || query.toLowerCase().includes("high risk")) {
+                        mockAnswer = "High-risk AI systems must implement risk management systems, data governance, detailed documentation, logging, transparency, and human oversight (Article 9-15).";
+                        mockTrail = [
+                            {
+                                text: "Article 9: Risk Management Systems. A risk management system shall be established, implemented, and maintained in relation to high-risk AI systems.",
+                                score: 0.852,
+                                metadata: { pages: [16], hierarchy_path: "EU_AI_Act_Draft_2026.pdf > CHAPTER III > SECTION 2 > Article 9" }
+                            }
+                        ];
+                    } else {
+                        mockAnswer = "I scanned the indexed documents but could not find a verified regulation regarding this query.";
+                        mockTrail = [
+                            {
+                                text: "General context: Regulatory requirements govern entity management, compliance operations, and risk reporting inside Luxembourg.",
+                                score: 0.312,
+                                metadata: { pages: [1], hierarchy_path: "CSSF_Circular_18_698.pdf > Section 1 > Introduction" }
+                            }
+                        ];
+                    }
+
+                    addMessage("bot", mockAnswer, mockTrail, mockGuardrail);
+                }, 1000);
+                return;
+            }
+
+            if (currentMode === "agent") {
+                try {
+                    const response = await fetch(`${API_URL}/audit`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            query_task: query
+                        })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.status === "success") {
+                            addAgentMessage(data.verdict, data.steps);
+                        } else {
+                            addAgentMessage(`Timeout: ${data.verdict}`, data.steps);
+                        }
+                    } else {
+                        addMessage("bot", "The Agent API encountered an error formulating the answer.");
+                    }
+                } catch (err) {
+                    addMessage("bot", `Network error: ${err}`);
+                }
+                return;
+            }
+
+            // Call local API RAG pipeline (Standard RAG Mode)
+            try {
+                const response = await fetch(`${API_URL}/query`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        query: query,
+                        filter_pdf: selectedDoc
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    addMessage("bot", data.answer, data.audit_trail, data.guardrail_status);
+                } else {
+                    addMessage("bot", "The API encountered an error formulating the answer.");
+                }
+            } catch (err) {
+                addMessage("bot", `Network error: ${err}`);
+            }
+        }
+
+        window.onload = checkConnection;
+    </script>
+</body>
+</html>

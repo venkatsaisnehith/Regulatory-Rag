@@ -1,0 +1,22 @@
+# Web API & Schema validation
+fastapi>=0.80.0
+uvicorn>=0.17.0
+pydantic>=2.0.0
+python-multipart>=0.0.5
+requests>=2.27.0
+
+# Numerical & Data manipulation
+numpy>=1.22.0
+pandas>=1.4.0
+
+# PDF Parsing & Extraction
+pymupdf>=1.19.0
+
+# Vector database & Semantic Search
+qdrant-client>=1.1.0
+sentence-transformers>=2.2.0
+
+# Agent Framework (Optional dependencies)
+langchain>=0.1.0
+langchain-community>=0.0.10
+openai>=1.10.0

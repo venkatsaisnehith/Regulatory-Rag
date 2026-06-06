@@ -1,0 +1,23 @@
+# Python compiled bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments (if created locally)
+venv/
+env/
+.env
+
+# Cache directories
+.cache/
+.huggingface/
+
+# Generated testing regulations (PDFs and text logs)
+data/sample_regulations/*.pdf
+data/sample_regulations/*.txt
+*.log
+
+# IDE files
+.vscode/
+.idea/
+*.swp
