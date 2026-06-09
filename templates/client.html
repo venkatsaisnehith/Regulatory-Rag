@@ -8,22 +8,27 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         :root {
-            --bg-primary: #080c14;
-            --bg-secondary: rgba(15, 23, 42, 0.6);
-            --bg-tertiary: #1e293b;
-            --accent-purple: #a855f7;
-            --accent-purple-glow: rgba(168, 85, 247, 0.3);
-            --accent-green: #10b981;
-            --accent-red: #ef4444;
-            --accent-blue: #3b82f6;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-color: rgba(255, 255, 255, 0.06);
-            --card-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.5);
+            --bg-primary: #fbfbfa; /* Warm alabaster */
+            --bg-secondary: #f4f4f2; /* Soft grey-white */
+            --bg-tertiary: #ffffff; /* Crisp white */
+            --accent-orange: #1a365d; /* Premium deep indigo/cobalt blue */
+            --accent-orange-glow: rgba(26, 54, 93, 0.08);
+            --accent-purple: #1a365d; /* redefined for compatibility */
+            --accent-purple-glow: rgba(26, 54, 93, 0.08);
+            --accent-green: #2e6241; /* Olive green */
+            --accent-red: #a53023; /* Terracotta red */
+            --accent-blue: #1a365d; /* Cobalt */
+            --text-main: #111115; /* Dark graphite */
+            --text-muted: #5e5e66; /* Slate grey */
+            --border-color: rgba(0, 0, 0, 0.08);
+            --card-shadow: 0px 8px 24px rgba(0, 0, 0, 0.05), 0px 2px 6px rgba(0, 0, 0, 0.02);
         }
 
         * {
@@ -39,82 +44,104 @@
             height: 100vh;
             display: flex;
             overflow: hidden;
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(168, 85, 247, 0.08) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.08) 0px, transparent 50%);
+            position: relative;
         }
 
-        h1, h2, h3, .font-outfit {
-            font-family: 'Outfit', sans-serif;
+        /* Organic CSS grain overlay */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.015;
+            z-index: 9999;
+            background-image: radial-gradient(circle, #000 10%, transparent 11%);
+            background-size: 3px 3px;
         }
 
-        /* App Container */
+        h1, h2, h3, .font-playfair {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+        }
+
+        /* App Container - Asymmetric & human layout */
         .app-container {
             display: flex;
             width: 100%;
             height: 100vh;
-            border: 1px solid var(--border-color);
-            background: rgba(8, 12, 20, 0.2);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
-
-        /* Sidebar Styling */
-        .sidebar {
-            width: 320px;
-            background: rgba(15, 23, 42, 0.8);
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
+            background: transparent;
             padding: 24px;
             gap: 24px;
+        }
+
+        /* Sidebar Styling - Distinct column */
+        .sidebar {
+            width: 320px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 24px 8px 20px 12px;
+            display: flex;
+            flex-direction: column;
+            padding: 30px 24px;
+            gap: 28px;
             flex-shrink: 0;
+            box-shadow: var(--card-shadow);
+            transform: rotate(-0.2deg);
         }
 
         .brand h1 {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 800;
-            background: linear-gradient(135deg, #fff 0%, var(--accent-purple) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--accent-orange);
+            font-family: 'Playfair Display', serif;
             letter-spacing: -0.5px;
+            line-height: 1.1;
         }
 
         .brand p {
             font-size: 11px;
             color: var(--text-muted);
-            margin-top: 4px;
+            margin-top: 6px;
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .section-title {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             color: var(--text-muted);
-            margin-bottom: 12px;
+            margin-bottom: 14px;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 6px;
         }
 
-        /* Upload Container */
+        /* Upload Container - Organic irregular shapes */
         .upload-box {
-            border: 2px dashed rgba(168, 85, 247, 0.3);
-            background: rgba(168, 85, 247, 0.02);
-            border-radius: 12px;
-            padding: 20px;
+            border: 2px dashed rgba(26, 54, 93, 0.25);
+            background: rgba(26, 54, 93, 0.01);
+            border-radius: 8px 24px 10px 20px;
+            padding: 24px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
         .upload-box:hover {
-            border-color: var(--accent-purple);
-            background: rgba(168, 85, 247, 0.05);
+            border-color: var(--accent-orange);
+            background: rgba(26, 54, 93, 0.04);
+            transform: translateY(-2px) rotate(0.5deg);
         }
 
         .upload-box p {
             font-size: 12px;
             color: var(--text-muted);
-            margin-top: 8px;
+            margin-top: 10px;
         }
 
         /* Doc list */
@@ -123,90 +150,99 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
+            padding-right: 2px;
         }
 
         .doc-item {
-            background: rgba(255, 255, 255, 0.03);
+            background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 12px;
+            border-radius: 16px 6px 14px 4px;
+            padding: 12px 14px;
             font-size: 13px;
             display: flex;
             align-items: center;
             gap: 10px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
         .doc-item:hover, .doc-item.active {
-            background: rgba(168, 85, 247, 0.1);
-            border-color: var(--accent-purple);
+            background: rgba(26, 54, 93, 0.06);
+            border-color: var(--accent-orange);
+            color: var(--text-main);
+            transform: translateY(-2px) rotate(-0.5deg);
         }
 
+        /* Mode Selection Buttons */
         .mode-btn {
             flex: 1;
-            padding: 10px;
-            border-radius: 8px;
+            padding: 12px;
+            border-radius: 24px 8px 20px 10px;
             border: 1px solid var(--border-color);
-            background: rgba(255, 255, 255, 0.02);
+            background: var(--bg-tertiary);
             color: var(--text-muted);
             font-size: 12px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
             text-align: center;
         }
         .mode-btn:hover {
-            border-color: rgba(168, 85, 247, 0.5);
+            border-color: rgba(26, 54, 93, 0.4);
             color: var(--text-main);
+            transform: translateY(-1px);
         }
         .mode-btn.active {
-            border-color: var(--accent-purple);
-            background: rgba(168, 85, 247, 0.1);
+            border-color: var(--accent-orange);
+            background: rgba(26, 54, 93, 0.08);
             color: var(--text-main);
-            box-shadow: 0 0 10px rgba(168, 85, 247, 0.15);
+            box-shadow: 0 4px 12px var(--accent-orange-glow);
         }
 
+        /* Agent Steps Reasoning Container */
         .agent-steps-container {
-            margin-top: 12px;
-            border-left: 2px solid var(--accent-purple);
-            padding-left: 12px;
+            margin-top: 14px;
+            border-left: 2px solid var(--accent-orange);
+            padding-left: 14px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
             font-size: 13px;
         }
 
         .agent-step {
-            background: rgba(255, 255, 255, 0.01);
+            background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 8px 12px;
+            border-radius: 12px 6px 14px 4px;
+            padding: 10px 14px;
+            box-shadow: var(--card-shadow);
         }
 
         .agent-step-title {
-            font-weight: 600;
-            color: var(--accent-purple);
-            margin-bottom: 4px;
+            font-weight: 700;
+            color: var(--accent-orange);
+            margin-bottom: 6px;
             display: flex;
             justify-content: space-between;
             font-size: 11px;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .agent-step-input {
             color: var(--text-muted);
             font-family: monospace;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 4px 6px;
+            background: rgba(0, 0, 0, 0.04);
+            padding: 4px 8px;
             border-radius: 4px;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             display: inline-block;
             font-size: 11px;
+            border: 1px solid var(--border-color);
         }
 
         .agent-step-obs {
@@ -215,43 +251,57 @@
             white-space: pre-wrap;
             max-height: 120px;
             overflow-y: auto;
-            background: rgba(255, 255, 255, 0.02);
-            padding: 6px;
-            border-radius: 4px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
+            background: rgba(0, 0, 0, 0.02);
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
         }
 
-        /* Chat Core Layout */
+        /* Chat Core Layout - Asymmetrical Placement */
         .chat-main {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            background: transparent;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px 24px 12px 20px;
             height: 100%;
+            box-shadow: var(--card-shadow);
+            transform: rotate(0.1deg);
         }
 
         /* Connection Header */
         .chat-header {
-            padding: 20px 30px;
+            padding: 24px 30px;
             border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
+        .chat-header h3 {
+            font-size: 20px;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
         .connection-status {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 12px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
         }
 
         .status-dot {
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
             background: var(--accent-red);
-            box-shadow: 0 0 8px var(--accent-red);
+            box-shadow: 0 0 6px var(--accent-red);
         }
 
         .status-dot.online {
@@ -266,7 +316,7 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 24px;
         }
 
         .message {
@@ -274,7 +324,7 @@
             flex-direction: column;
             gap: 6px;
             max-width: 85%;
-            animation: fadeIn 0.3s ease;
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .message.user {
@@ -286,28 +336,33 @@
         }
 
         .message-bubble {
-            padding: 16px 20px;
+            padding: 18px 22px;
             border-radius: 16px;
             font-size: 14px;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         .message.user .message-bubble {
-            background: linear-gradient(135deg, var(--accent-purple) 0%, #7e22ce 100%);
+            background: linear-gradient(135deg, var(--accent-orange) 0%, #102a43 100%);
             color: #fff;
-            border-bottom-right-radius: 4px;
+            border-radius: 20px 20px 4px 20px;
+            box-shadow: 0px 4px 16px var(--accent-orange-glow);
         }
 
         .message.bot .message-bubble {
-            background: rgba(30, 41, 59, 0.7);
+            background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            border-bottom-left-radius: 4px;
+            border-radius: 20px 20px 20px 4px;
+            box-shadow: var(--card-shadow);
         }
 
         .message-meta {
             font-size: 11px;
             color: var(--text-muted);
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .message.user .message-meta {
@@ -319,81 +374,90 @@
             padding: 24px 30px;
             border-top: 1px solid var(--border-color);
             display: flex;
-            gap: 12px;
+            gap: 14px;
         }
 
         .input-box {
             flex-grow: 1;
-            background: var(--bg-secondary);
+            background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 14px 18px;
+            border-radius: 12px 24px 8px 16px;
+            padding: 16px 20px;
             color: var(--text-main);
             font-family: inherit;
             font-size: 14px;
             transition: all 0.2s ease;
+            box-shadow: inset 0px 2px 4px rgba(0,0,0,0.05);
         }
 
         .input-box:focus {
             outline: none;
-            border-color: var(--accent-purple);
-            box-shadow: 0 0 0 2px var(--accent-purple-glow);
+            border-color: var(--accent-orange);
+            box-shadow: 0 0 0 2px var(--accent-orange-glow);
         }
 
         .btn-send {
-            background: linear-gradient(135deg, var(--accent-purple) 0%, #7e22ce 100%);
+            background: linear-gradient(135deg, var(--accent-orange) 0%, #102a43 100%);
             color: #fff;
             border: none;
-            border-radius: 12px;
-            padding: 0 24px;
+            border-radius: 24px 8px 24px 8px;
+            padding: 0 28px;
             font-weight: 600;
             font-size: 14px;
             cursor: pointer;
-            transition: transform 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
         .btn-send:hover {
-            transform: translateY(-1px);
+            transform: translateY(-2px) rotate(-1deg);
+            box-shadow: 0 6px 20px var(--accent-orange-glow);
         }
 
         /* Audit Lineage Panel */
         .audit-panel {
             width: 380px;
-            background: rgba(15, 23, 42, 0.85);
-            border-left: 1px solid var(--border-color);
-            padding: 24px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px 12px 24px 8px;
+            padding: 30px 24px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 24px;
             flex-shrink: 0;
             overflow-y: auto;
+            box-shadow: var(--card-shadow);
+            transform: rotate(-0.1deg);
         }
 
         .audit-header {
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 16px;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 18px;
         }
 
         .audit-header h2 {
-            font-size: 18px;
-            font-weight: 600;
+            font-size: 20px;
+            font-weight: 700;
             color: var(--text-main);
+            font-family: 'Playfair Display', serif;
         }
 
         .audit-header p {
             font-size: 11px;
             color: var(--text-muted);
-            margin-top: 4px;
+            margin-top: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .audit-stat-row {
             display: flex;
             justify-content: space-between;
-            background: rgba(255,255,255,0.02);
+            background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 12px;
+            border-radius: 12px 6px 14px 4px;
+            padding: 14px 18px;
             font-size: 12px;
+            box-shadow: var(--card-shadow);
         }
 
         .audit-stat {
@@ -403,9 +467,9 @@
         }
 
         .stat-value {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 700;
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Playfair Display', serif;
         }
 
         .stat-value.green { color: var(--accent-green); }
@@ -414,23 +478,25 @@
         .audit-chunks-container {
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 16px;
         }
 
         .chunk-card {
-            background: rgba(255, 255, 255, 0.02);
+            background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 16px;
+            border-radius: 12px 24px 8px 16px;
+            padding: 18px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
             font-size: 12px;
-            transition: border-color 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: var(--card-shadow);
         }
 
         .chunk-card:hover {
-            border-color: rgba(168, 85, 247, 0.3);
+            border-color: rgba(26, 54, 93, 0.3);
+            transform: translateY(-3px) rotate(0.5deg);
         }
 
         .chunk-meta {
@@ -441,13 +507,13 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 6px;
+            padding-bottom: 8px;
         }
 
         .chunk-text {
             color: var(--text-main);
             line-height: 1.6;
-            max-height: 100px;
+            max-height: 120px;
             overflow-y: auto;
             font-family: 'Inter', sans-serif;
             padding-right: 4px;
@@ -455,7 +521,72 @@
 
         /* Animations */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .audit-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .stat-value.green { color: var(--accent-green); }
+        .stat-value.red { color: var(--accent-red); }
+
+        .audit-chunks-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .chunk-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px 24px 8px 16px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 12px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: var(--card-shadow);
+        }
+
+        .chunk-card:hover {
+            border-color: rgba(212, 91, 37, 0.3);
+            transform: translateY(-3px) rotate(0.5deg);
+        }
+
+        .chunk-meta {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-muted);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        .chunk-text {
+            color: var(--text-main);
+            line-height: 1.6;
+            max-height: 120px;
+            overflow-y: auto;
+            font-family: 'Inter', sans-serif;
+            padding-right: 4px;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
@@ -467,14 +598,13 @@
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="brand">
-                <h1>Regulatory RAG Agent</h1>
-                <p>Luxembourg Automated Audit & Compliance Engine</p>
+                <h1>Regulatory RAG</h1>
+                <p>Bespoke Luxembourg Audit Engine</p>
             </div>
             
             <div>
                 <h3 class="section-title">Ingest Document</h3>
                 <div class="upload-box" id="upload-box" onclick="triggerUpload()">
-                    <span style="font-size: 24px; color: var(--accent-purple);">📥</span>
                     <p>Click to Upload Regulatory PDF</p>
                     <input type="file" id="file-input" style="display: none;" accept=".pdf" onchange="handleFileUpload()">
                 </div>
@@ -484,10 +614,10 @@
                 <h3 class="section-title">Operational Mode</h3>
                 <div style="display: flex; gap: 8px;">
                     <button id="mode-rag" class="mode-btn active" onclick="switchMode('rag')">
-                        🔍 Standard RAG
+                        Standard RAG
                     </button>
                     <button id="mode-agent" class="mode-btn" onclick="switchMode('agent')">
-                        🤖 Auditor Agent
+                        Auditor Agent
                     </button>
                 </div>
             </div>
@@ -515,14 +645,16 @@
 
             <div class="messages-container" id="messages-container">
                 <!-- Welcome Message -->
-                <div class="message bot">
-                    <div class="message-bubble">
-                        Hello! I am your regulatory compliance RAG agent. 
-                        I can search through indexed Luxembourg financial circulars and the EU AI Act to answer complex compliance queries with structured audit logs.
-                        <br><br>
-                        <strong>Try uploading a compliance PDF, or ask a question if documents are already indexed!</strong>
+                <div class="message bot" style="max-width: 650px; margin-bottom: 20px;">
+                    <div style="font-family: 'Playfair Display', serif; font-size: 2.8rem; line-height: 1.1; color: var(--text-main); font-weight: 800; letter-spacing: -1.2px; margin-bottom: 12px; transform: rotate(-0.5deg);">
+                      Sovereign Fund<br>&thinsp;&thinsp;Compliance Ledger.
                     </div>
-                    <div class="message-meta">Compliance Agent</div>
+                    <div class="message-bubble" style="background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 20px 20px 20px 4px; box-shadow: var(--card-shadow); font-family: 'Inter', sans-serif; font-size: 14px; color: var(--text-main); line-height: 1.6;">
+                      Hello. I am your compliance RAG environment. I parse, structure, and verify Luxembourg circulars and the EU AI Act using active ReAct agents.
+                      <br><br>
+                      Feel free to upload a PDF file on the left, or ask a compliance question.
+                    </div>
+                    <div class="message-meta">System Welcome</div>
                 </div>
             </div>
 
@@ -699,7 +831,7 @@
                 <div class="message-bubble" ${auditTrail ? `style="cursor:pointer;" onclick="inspectAudit(${msgIndex})"` : ""}>
                     ${text}
                 </div>
-                <div class="message-meta">${sender === 'user' ? 'User Query' : 'Compliance Agent'} ${auditTrail ? '🔍 (Click to Audit Lineage)' : ''}</div>
+                <div class="message-meta">${sender === 'user' ? 'User Query' : 'Compliance Agent'} ${auditTrail ? '(Click to Audit Lineage)' : ''}</div>
             `;
             container.appendChild(msg);
             container.scrollTop = container.scrollHeight;
@@ -771,9 +903,9 @@
             }
 
             msg.innerHTML = `
-                <div class="message-bubble" style="background: rgba(168, 85, 247, 0.05); border: 1px solid rgba(168, 85, 247, 0.3);">
-                    <div style="font-weight: 700; color: var(--accent-purple); font-size: 15px; margin-bottom: 8px; font-family: 'Outfit';">
-                        🤖 Autonomous Auditor Agent Verdict
+                <div class="message-bubble" style="background: rgba(26, 54, 93, 0.02); border: 1px dashed var(--accent-orange); border-radius: 20px 20px 20px 4px; box-shadow: var(--card-shadow);">
+                    <div style="font-weight: 700; color: var(--accent-orange); font-size: 15px; margin-bottom: 8px; font-family: 'Playfair Display', serif;">
+                        Autonomous Auditor Agent Verdict
                     </div>
                     <div>${verdict}</div>
                     ${stepsHtml}
@@ -790,12 +922,12 @@
             
             const auditContainer = document.getElementById("audit-chunks");
             auditContainer.innerHTML = `
-                <div class="chunk-card" style="border-color: var(--accent-purple);">
+                <div class="chunk-card" style="border-color: var(--accent-orange); border-radius: 12px 24px 8px 16px;">
                     <div class="chunk-meta">
                         <span>Agent Execution Summary</span>
                         <span>Steps: ${steps ? steps.length : 0}</span>
                     </div>
-                    <div style="font-weight: 600; color: var(--accent-purple); font-size: 11px; margin-bottom: 4px;">
+                    <div style="font-weight: 600; color: var(--accent-orange); font-size: 11px; margin-bottom: 4px; font-family: 'Playfair Display', serif;">
                         REACT COMPLIANCE PROTOCOL
                     </div>
                     <div class="chunk-text" style="max-height: none;">

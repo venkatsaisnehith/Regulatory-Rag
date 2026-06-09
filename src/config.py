@@ -7,11 +7,11 @@ and Hugging Face API keys.
 import os
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
-load_dotenv()
-
 # --- General System Paths ---
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Load environment variables from .env file using the absolute path
+load_dotenv(dotenv_path=os.path.join(BASE_DIR, ".env"), override=True)
 DATA_DIR = os.path.join(BASE_DIR, "data")
 SAMPLE_REG_DIR = os.path.join(DATA_DIR, "sample_regulations")
 
@@ -26,8 +26,8 @@ for folder in [DATA_DIR, SAMPLE_REG_DIR]:
 LLM_PROVIDER = "huggingface"  # Options: "huggingface", "openai", "azure"
 
 # Hugging Face Settings
-# Mistral-7B or Llama-3-8B are highly reliable serverless options
-HF_MODEL_ID = "mistralai/Mistral-7B-Instruct-v0.3"
+# We use Qwen2.5-7B-Instruct as it is non-gated and highly performant
+HF_MODEL_ID = "Qwen/Qwen2.5-7B-Instruct"
 HF_API_TOKEN = os.getenv("HUGGINGFACEHUB_API_TOKEN", "")
 
 # Local Embedding Model (SentenceTransformers)

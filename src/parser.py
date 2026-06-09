@@ -132,6 +132,20 @@ class HierarchicalPDFParser:
                     # Accumulate standard text block
                     current_chunk_text.append(cleaned_text)
                     current_chunk_pages.append(page_num + 1)  # 1-indexed pages
+                    
+                    # Prevent chunks from becoming too large (which causes embedding truncation)
+                    current_length = sum(len(t) for t in current_chunk_text)
+                    if current_length > 1500:
+                        chunks.append(self._create_chunk(
+                            text=" ".join(current_chunk_text),
+                            pdf_name=pdf_name,
+                            pages=list(set(current_chunk_pages)),
+                            chapter=current_chapter,
+                            section=current_section,
+                            article=current_article
+                        ))
+                        current_chunk_text = []
+                        current_chunk_pages = []
 
         # Append final remaining chunk
         if current_chunk_text:
