@@ -15,20 +15,20 @@
 
     <style>
         :root {
-            --bg-primary: #fbfbfa; /* Warm alabaster */
-            --bg-secondary: #f4f4f2; /* Soft grey-white */
+            --bg-primary: #f7f6f2; /* Warm sand/parchment */
+            --bg-secondary: #ecebe6; /* Soft stone grey */
             --bg-tertiary: #ffffff; /* Crisp white */
-            --accent-orange: #1a365d; /* Premium deep indigo/cobalt blue */
-            --accent-orange-glow: rgba(26, 54, 93, 0.08);
-            --accent-purple: #1a365d; /* redefined for compatibility */
-            --accent-purple-glow: rgba(26, 54, 93, 0.08);
-            --accent-green: #2e6241; /* Olive green */
-            --accent-red: #a53023; /* Terracotta red */
-            --accent-blue: #1a365d; /* Cobalt */
-            --text-main: #111115; /* Dark graphite */
-            --text-muted: #5e5e66; /* Slate grey */
-            --border-color: rgba(0, 0, 0, 0.08);
-            --card-shadow: 0px 8px 24px rgba(0, 0, 0, 0.05), 0px 2px 6px rgba(0, 0, 0, 0.02);
+            --accent-orange: #1e3f20; /* Deep imperial forest green */
+            --accent-orange-glow: rgba(30, 63, 32, 0.08);
+            --accent-purple: #8f5d38; /* Warm bronze / terracotta accent */
+            --accent-purple-glow: rgba(143, 93, 56, 0.08);
+            --accent-green: #2d6a4f; /* Emerald forest green */
+            --accent-red: #b83c3c; /* Terracotta red */
+            --accent-blue: #1e3f20; /* Matching forest green */
+            --text-main: #1a1c19; /* Obsidian graphite */
+            --text-muted: #656a64; /* Sage grey */
+            --border-color: rgba(30, 63, 32, 0.12);
+            --card-shadow: 0px 8px 24px rgba(30, 63, 32, 0.04), 0px 2px 6px rgba(30, 63, 32, 0.02);
         }
 
         * {
@@ -123,8 +123,8 @@
 
         /* Upload Container - Organic irregular shapes */
         .upload-box {
-            border: 2px dashed rgba(26, 54, 93, 0.25);
-            background: rgba(26, 54, 93, 0.01);
+            border: 2px dashed rgba(30, 63, 32, 0.25);
+            background: rgba(30, 63, 32, 0.01);
             border-radius: 8px 24px 10px 20px;
             padding: 24px;
             text-align: center;
@@ -134,7 +134,7 @@
 
         .upload-box:hover {
             border-color: var(--accent-orange);
-            background: rgba(26, 54, 93, 0.04);
+            background: rgba(30, 63, 32, 0.04);
             transform: translateY(-2px) rotate(0.5deg);
         }
 
@@ -171,7 +171,7 @@
         }
 
         .doc-item:hover, .doc-item.active {
-            background: rgba(26, 54, 93, 0.06);
+            background: rgba(30, 63, 32, 0.06);
             border-color: var(--accent-orange);
             color: var(--text-main);
             transform: translateY(-2px) rotate(-0.5deg);
@@ -192,13 +192,13 @@
             text-align: center;
         }
         .mode-btn:hover {
-            border-color: rgba(26, 54, 93, 0.4);
+            border-color: rgba(30, 63, 32, 0.4);
             color: var(--text-main);
             transform: translateY(-1px);
         }
         .mode-btn.active {
             border-color: var(--accent-orange);
-            background: rgba(26, 54, 93, 0.08);
+            background: rgba(30, 63, 32, 0.08);
             color: var(--text-main);
             box-shadow: 0 4px 12px var(--accent-orange-glow);
         }
@@ -343,7 +343,7 @@
         }
 
         .message.user .message-bubble {
-            background: linear-gradient(135deg, var(--accent-orange) 0%, #102a43 100%);
+            background: linear-gradient(135deg, var(--accent-orange) 0%, #0e2410 100%);
             color: #fff;
             border-radius: 20px 20px 4px 20px;
             box-shadow: 0px 4px 16px var(--accent-orange-glow);
@@ -397,7 +397,7 @@
         }
 
         .btn-send {
-            background: linear-gradient(135deg, var(--accent-orange) 0%, #102a43 100%);
+            background: linear-gradient(135deg, var(--accent-orange) 0%, #0e2410 100%);
             color: #fff;
             border: none;
             border-radius: 24px 8px 24px 8px;
@@ -495,72 +495,7 @@
         }
 
         .chunk-card:hover {
-            border-color: rgba(26, 54, 93, 0.3);
-            transform: translateY(-3px) rotate(0.5deg);
-        }
-
-        .chunk-meta {
-            display: flex;
-            justify-content: space-between;
-            color: var(--text-muted);
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 8px;
-        }
-
-        .chunk-text {
-            color: var(--text-main);
-            line-height: 1.6;
-            max-height: 120px;
-            overflow-y: auto;
-            font-family: 'Inter', sans-serif;
-            padding-right: 4px;
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .audit-stat {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .stat-value {
-            font-size: 18px;
-            font-weight: 700;
-            font-family: 'Playfair Display', serif;
-        }
-
-        .stat-value.green { color: var(--accent-green); }
-        .stat-value.red { color: var(--accent-red); }
-
-        .audit-chunks-container {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .chunk-card {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 12px 24px 8px 16px;
-            padding: 18px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            font-size: 12px;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            box-shadow: var(--card-shadow);
-        }
-
-        .chunk-card:hover {
-            border-color: rgba(212, 91, 37, 0.3);
+            border-color: rgba(30, 63, 32, 0.3);
             transform: translateY(-3px) rotate(0.5deg);
         }
 
@@ -903,7 +838,7 @@
             }
 
             msg.innerHTML = `
-                <div class="message-bubble" style="background: rgba(26, 54, 93, 0.02); border: 1px dashed var(--accent-orange); border-radius: 20px 20px 20px 4px; box-shadow: var(--card-shadow);">
+                <div class="message-bubble" style="background: rgba(30, 63, 32, 0.02); border: 1px dashed var(--accent-orange); border-radius: 20px 20px 20px 4px; box-shadow: var(--card-shadow);">
                     <div style="font-weight: 700; color: var(--accent-orange); font-size: 15px; margin-bottom: 8px; font-family: 'Playfair Display', serif;">
                         Autonomous Auditor Agent Verdict
                     </div>
