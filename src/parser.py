@@ -66,7 +66,7 @@ class HierarchicalPDFParser:
                 if not text:
                     continue
 
-                # Clean clean line breaks inside block
+                # Clean line breaks inside block
                 cleaned_text = re.sub(r"\s+", " ", text).strip()
                 
                 # Check for structural changes

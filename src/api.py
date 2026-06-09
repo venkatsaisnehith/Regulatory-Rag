@@ -49,7 +49,7 @@ try:
     guardrail = FactualityGuardrail()
 except Exception as init_err:
     logger.error(f"Module initialization error: {init_err}")
-    # We define placeholders to allow the API to load even if models are fetching
+    # Initialize module references to None to support lazy loading or fallback behavior if initialization fails.
     vector_store = None
     pdf_parser = None
     reranker = None
@@ -146,10 +146,10 @@ def query_compliance(payload: ComplianceQuery):
     # 4. Generate LLM response using Hugging Face Serverless API
     raw_answer = ""
     if not HF_API_TOKEN:
-        # Fallback guidance if they haven't set their Hugging Face API Token yet
+        # Fallback response strategy if Hugging Face API token is not configured
         raw_answer = (
-            "Local Model Verification: The Hugging Face API connection is running in offline simulation mode. "
-            "Retrieved Context Chunks were successfully compiled and verified.\n"
+            "Offline Simulation Mode: Hugging Face API token is not configured. "
+            "Context retrieval and rerank validation was executed successfully.\n"
             f"Primary Reference: {reranked_contexts[0]['metadata']['hierarchy_path']}"
         )
     else:

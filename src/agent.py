@@ -50,9 +50,8 @@ class ComplianceTools:
         """
         logger.info(f"[Tool: get_fund_metrics] Querying databases for fund ID: {fund_id}")
         
-        # In a production system, this queries the Project 2 database API.
-        # We simulate the response metrics:
-        # Fund is in violation: Cash ratio is 0.5% (target is 2%)
+        # Mock database query mapping fund parameters
+        # LU123456789 represents a test case with a low cash buffer (0.5%)
         mock_fund_database = {
             "LU123456789": {
                 "Fund_Name": "Lux Growth Equities Fund",
@@ -172,7 +171,7 @@ class AuditorAgent:
 
             except Exception as parse_err:
                 logger.error(f"Failed to parse agent action: {parse_err}")
-                # If LLM failed to write JSON, we force it to output a final answer
+                # Fallback recovery if LLM output violates JSON schema
                 history += f"\nError: Your output must be a valid JSON containing either 'Action'/'Input' or 'Final_Answer'. Correct your format."
         
         return {
@@ -194,7 +193,7 @@ class AuditorAgent:
     def _query_hf(self, prompt: str) -> str:
         """Helper to query Hugging Face API."""
         if not HF_API_TOKEN:
-            # Local fallback simulation if API token is missing
+            # Local fallback execution for offline sandbox evaluation
             if "get_fund_metrics" in prompt and "LU123456789" in prompt and "Observation" not in prompt:
                 return '{"Action": "get_fund_metrics", "Input": "LU123456789"}'
             elif "query_regulations" in prompt and "Observation" not in prompt:

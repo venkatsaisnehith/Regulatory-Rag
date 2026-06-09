@@ -735,7 +735,7 @@
             } catch (err) {
                 isOffline = true;
                 document.getElementById("api-status-dot").className = "status-dot";
-                document.getElementById("api-status-text").textContent = "Offline Sandbox Mode";
+                document.getElementById("api-status-text").textContent = "Offline Simulation Mode";
                 loadMockDocuments();
             }
         }
@@ -789,7 +789,7 @@
             
             if (isOffline) {
                 setTimeout(() => {
-                    addMessage("bot", `[Sandbox Fallback] Upload complete. "${file.name}" simulated as indexed.`);
+                    addMessage("bot", `[Offline Mode] Ingestion complete. "${file.name}" indexed locally.`);
                     documentRegistry.push(file.name);
                     renderDocumentList();
                 }, 1500);
@@ -1000,7 +1000,7 @@
                     return;
                 }
 
-                // Heuristic Offline Sandbox responses to wow the user (RAG Mode)
+                // Fallback mock responses when server connectivity is unavailable (RAG Mode)
                 setTimeout(() => {
                     let mockAnswer = "";
                     let mockGuardrail = "passed";

@@ -78,7 +78,7 @@ class FactualityGuardrail:
         # 4. Final Assessment
         if len(violations) > 0:
             logger.warning(f"Guardrail failed! Found {len(violations)} factuality violations.")
-            # Fallback safe answer for compliance compliance safety
+            # Fallback safe answer for compliance validation safety
             fallback_msg = (
                 "Factuality Check Failure: The generated response contains details that could not be validated against the source circulars.\n"
                 "Unverified claims:\n" + 
