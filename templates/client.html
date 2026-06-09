@@ -15,20 +15,20 @@
 
     <style>
         :root {
-            --bg-primary: #0c130e; /* Deep obsidian forest green */
-            --bg-secondary: #141f17; /* Dark moss green */
-            --bg-tertiary: #1b291f; /* Rich pine green */
-            --accent-orange: #d4a373; /* Warm ochre gold */
-            --accent-orange-glow: rgba(212, 163, 115, 0.08);
-            --accent-purple: #a5a58d; /* Sage/olive accent */
-            --accent-purple-glow: rgba(165, 165, 141, 0.08);
-            --accent-green: #52b788; /* Emerald success green */
-            --accent-red: #ff8787; /* Terracotta error red */
-            --accent-blue: #d4a373; /* Matching gold */
-            --text-main: #f3f6f4; /* Soft mist white */
-            --text-muted: #889c8d; /* Sage grey-green */
-            --border-color: rgba(243, 246, 244, 0.12);
-            --card-shadow: 0px 8px 24px rgba(0, 0, 0, 0.35), 0px 2px 6px rgba(0, 0, 0, 0.15);
+            --bg-primary: #ffffff; /* Pure white background */
+            --bg-secondary: #f8f9fa; /* Crisp light neutral grey */
+            --bg-tertiary: #ffffff; /* Crisp white cards */
+            --accent-orange: #1e3f20; /* Deep imperial forest green */
+            --accent-orange-glow: rgba(30, 63, 32, 0.06);
+            --accent-purple: #8f5d38; /* Warm bronze / terracotta accent */
+            --accent-purple-glow: rgba(143, 93, 56, 0.06);
+            --accent-green: #2d6a4f; /* Emerald green success */
+            --accent-red: #b83c3c; /* Terracotta red error */
+            --accent-blue: #1e3f20; /* Matching forest green */
+            --text-main: #111827; /* Dark charcoal text */
+            --text-muted: #4b5563; /* Muted grey text */
+            --border-color: rgba(0, 0, 0, 0.08);
+            --card-shadow: 0px 8px 24px rgba(30, 63, 32, 0.04), 0px 2px 6px rgba(30, 63, 32, 0.02);
         }
 
         * {
@@ -58,7 +58,7 @@
             pointer-events: none;
             opacity: 0.015;
             z-index: 9999;
-            background-image: radial-gradient(circle, #fff 10%, transparent 11%);
+            background-image: radial-gradient(circle, #000 10%, transparent 11%);
             background-size: 3px 3px;
         }
 
@@ -123,8 +123,8 @@
 
         /* Upload Container - Organic irregular shapes */
         .upload-box {
-            border: 2px dashed rgba(212, 163, 115, 0.25);
-            background: rgba(212, 163, 115, 0.02);
+            border: 2px dashed rgba(30, 63, 32, 0.2);
+            background: rgba(30, 63, 32, 0.01);
             border-radius: 8px 24px 10px 20px;
             padding: 24px;
             text-align: center;
@@ -134,7 +134,7 @@
 
         .upload-box:hover {
             border-color: var(--accent-orange);
-            background: rgba(212, 163, 115, 0.06);
+            background: rgba(30, 63, 32, 0.04);
             transform: translateY(-2px) rotate(0.5deg);
         }
 
@@ -171,7 +171,7 @@
         }
 
         .doc-item:hover, .doc-item.active {
-            background: rgba(212, 163, 115, 0.08);
+            background: rgba(30, 63, 32, 0.06);
             border-color: var(--accent-orange);
             color: var(--text-main);
             transform: translateY(-2px) rotate(-0.5deg);
@@ -192,13 +192,13 @@
             text-align: center;
         }
         .mode-btn:hover {
-            border-color: rgba(212, 163, 115, 0.4);
+            border-color: rgba(30, 63, 32, 0.3);
             color: var(--text-main);
             transform: translateY(-1px);
         }
         .mode-btn.active {
             border-color: var(--accent-orange);
-            background: rgba(212, 163, 115, 0.08);
+            background: rgba(30, 63, 32, 0.06);
             color: var(--text-main);
             box-shadow: 0 4px 12px var(--accent-orange-glow);
         }
@@ -343,9 +343,9 @@
         }
 
         .message.user .message-bubble {
-            background: linear-gradient(135deg, var(--accent-orange) 0%, #8c5d37 100%);
-            color: #0c130e;
-            font-weight: 600;
+            background: linear-gradient(135deg, var(--accent-orange) 0%, #0e2410 100%);
+            color: #ffffff;
+            font-weight: 500;
             border-radius: 20px 20px 4px 20px;
             box-shadow: 0px 4px 16px var(--accent-orange-glow);
         }
@@ -398,8 +398,8 @@
         }
 
         .btn-send {
-            background: linear-gradient(135deg, var(--accent-orange) 0%, #8c5d37 100%);
-            color: #0c130e;
+            background: linear-gradient(135deg, var(--accent-orange) 0%, #0e2410 100%);
+            color: #ffffff;
             border: none;
             border-radius: 24px 8px 24px 8px;
             padding: 0 28px;
@@ -496,7 +496,7 @@
         }
 
         .chunk-card:hover {
-            border-color: rgba(212, 163, 115, 0.3);
+            border-color: rgba(30, 63, 32, 0.25);
             transform: translateY(-3px) rotate(0.5deg);
         }
 
@@ -839,7 +839,7 @@
             }
 
             msg.innerHTML = `
-                <div class="message-bubble" style="background: rgba(212, 163, 115, 0.04); border: 1px dashed var(--accent-orange); border-radius: 20px 20px 20px 4px; box-shadow: var(--card-shadow);">
+                <div class="message-bubble" style="background: rgba(30, 63, 32, 0.02); border: 1px dashed var(--accent-orange); border-radius: 20px 20px 20px 4px; box-shadow: var(--card-shadow);">
                     <div style="font-weight: 700; color: var(--accent-orange); font-size: 15px; margin-bottom: 8px; font-family: 'Playfair Display', serif;">
                         Autonomous Auditor Agent Verdict
                     </div>
